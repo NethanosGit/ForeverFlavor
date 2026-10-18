@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: ForeverFlavor
+## Notes: Shows the flavor text of looted items.
+## Version: 1.0
+## SavedVariables: ForeverFlavorDB
+## X-License: MIT for project-authored code; art taken from DragonUI keeps its own terms (see DragonUI THIRD_PARTY_NOTICES)
+
+ForeverFlavor.lua
