@@ -27,7 +27,7 @@ local PAD_BOTTOM = 18
 local CLOSE_SIZE = 16
 local CLOSE_X, CLOSE_Y = -8, -4
 local HINT_TEXT = "[Click to read...]"
-local HINT_X, HINT_Y = 0, -7
+local HINT_X, HINT_Y = 0, -5
 
 local ICON_FRAME_OPEN, ICON_FRAME_CX, ICON_FRAME_CY = 0.4922, 0.4727, 0.4336
 local ICON_FRAME_SIZE = ICON_SIZE / ICON_FRAME_OPEN
