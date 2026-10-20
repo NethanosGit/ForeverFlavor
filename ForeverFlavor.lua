@@ -27,7 +27,7 @@ local PAD_BOTTOM = 18
 local CLOSE_SIZE = 16
 local CLOSE_X, CLOSE_Y = -8, -4
 local HINT_TEXT = "[Click to read...]"
-local HINT_X, HINT_Y = 0, -5
+local HINT_X, HINT_Y = 0, -7
 
 local ICON_FRAME_OPEN, ICON_FRAME_CX, ICON_FRAME_CY = 0.4922, 0.4727, 0.4336
 local ICON_FRAME_SIZE = ICON_SIZE / ICON_FRAME_OPEN
@@ -120,6 +120,10 @@ local function ScanTooltip(link, bag, slot)
         scanTip:SetHyperlink(link)
     end
     local info = {}
+    if bag then
+        local _, questId = GetContainerItemQuestInfo(bag, slot)
+        info.questId = questId
+    end
     for i = 1, scanTip:NumLines() do
         local line = _G["ForeverFlavorScanTipTextLeft" .. i]
         local text = line and line:GetText()
@@ -176,6 +180,16 @@ local function FindQuestForItem(itemName)
     end
 end
 
+local function QuestTitleFromID(questId)
+    scanTip:ClearLines()
+    scanTip:SetOwner(UIParent, "ANCHOR_NONE")
+    scanTip:SetHyperlink("quest:" .. questId)
+    local line = _G["ForeverFlavorScanTipTextLeft1"]
+    local text = line and line:GetText()
+    if text and text ~= "" then
+        return text
+    end
+end
 local delayed = {}
 local delayFrame = CreateFrame("Frame")
 delayFrame:Hide()
@@ -473,7 +487,7 @@ local function Print(text)
     DEFAULT_CHAT_FRAME:AddMessage("ForeverFlavor: " .. text)
 end
 
-local function HandleLink(link, verbose)
+local function HandleLink(link, verbose, retried)
     local id = ItemID(link)
     if not verbose and id and ForeverFlavorCharDB.seen[id] then
         return
@@ -493,6 +507,15 @@ local function HandleLink(link, verbose)
         return
     end
     local questName = interactive and FindQuestForItem(name) or nil
+    if not questName and info.startsQuest and info.questId then
+        questName = QuestTitleFromID(info.questId)
+        if not questName and not retried then
+            After(0.5, function()
+                HandleLink(link, verbose, true)
+            end)
+            return
+        end
+    end
     local questIcon
     if questName then
         questIcon = "active"
